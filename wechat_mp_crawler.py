@@ -1352,20 +1352,3 @@ class WechatArticleManager:
         return True, sorted_articles
 
 
-# ============ 如果直接运行此脚本 ============
-
-if __name__ == "__main__":
-    # 程序入口示例
-    manager = WechatArticleManager()
-    
-    # 示例：搜索关键词
-    target_account = "同济计算机"  # 修改为您想爬取的公众号名称
-    keywords = ["人工智能", "数据科学", "程序设计"]
-    weights = [1.5, 1.2, 1.0]
-    
-    success, articles = manager.search_keywords_in_account(
-        nickname=target_account,
-        keywords=keywords,
-        weights=weights,
-        max_articles=20
-    )
