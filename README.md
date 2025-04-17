@@ -15,7 +15,6 @@ For WeChat Official Accounts, a small-scale crawler program that doesn't use pac
 pip install selenium webdriver-manager pandas wechatarticles     
 需要下载谷歌浏览器，如有则跳过这一步（ https://www.google.com/chrome/）    
 注册一个微信公众号账户，注册链接https://mp.weixin.qq.com/ （进入后注册一个新公众号账户，切记不要用官方的账号！！！，因为账号可能被封禁）    
-文件格式  
 
 ## 一、功能一使用教学
 程序需要一个名为accounts.xlsx的Excel文件，包含要爬取的公众号名称，格式如下（本文件夹已经包括）  
@@ -76,7 +75,7 @@ nickname
 
 ## 五、可能的问题与解决方案
   
-1.极个别数公众号延迟比较严重，可能没法获取最新的文章（当天只能爬取到昨天的文章），目前仅发现“同伙管”公众号有这个问题，建议手动检查   
+1.极个别数公众号延迟比较严重，可能没法获取最新的文章（当天只能爬取到昨天的文章）
 2.无法登录: 确保VPN已关闭，再次尝试。仍无法登录。删除weixin_credentials.py再次运行程序，本次会扫码登录，若还是无法登录，可能是账号被封禁，更换账号登录   
 3.无法获取文章: 检查公众号名称是否正确，凭证是否有效   
 4.被封禁: 重新注册一个微信公众号   
