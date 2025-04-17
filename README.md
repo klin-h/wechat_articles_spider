@@ -81,3 +81,13 @@ nickname
 3.无法获取文章: 检查公众号名称是否正确，凭证是否有效
 4.被封禁: 重新注册一个微信公众号
 5.没有找到当天文章: 这可能是因为公众号最近确实没有发文，请检查公众号最新状态
+
+# 致谢（Acknowledgments）
+本项目使用了 [wechat_articles_spider]https://github.com/wnma3mz/wechat_articles_spider，licensed under the Apache License 2.0.  
+Copyright © [2020] [wnma3mz]
+You can find the original license [here](https://www.apache.org/licenses/LICENSE-2.0).
+
+#许可证
+MIT License
+#免责声明
+本工具仅供学习和研究使用，请勿用于任何商业用途。使用本工具爬取内容时，请遵守微信公众平台的使用条款和相关法律法规。
