@@ -17,7 +17,7 @@ pip install selenium webdriver-manager pandas wechatarticles
 注册一个微信公众号账户，注册链接https://mp.weixin.qq.com/ （进入后注册一个新公众号账户，切记不要用官方的账号！！！，因为账号可能被封禁）
 文件格式
 
-# 一、功能一使用教学
+## 一、功能一使用教学
 程序需要一个名为accounts.xlsx的Excel文件，包含要爬取的公众号名称，格式如下（本文件夹已经包括）
 nickname
 机器之心
