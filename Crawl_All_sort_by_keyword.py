@@ -11,7 +11,7 @@ def main():
     manager = WechatArticleManager(headless=False)
     
     # 指定公众号名称
-    target_account = "同济大学"  # 修改为您想爬取的公众号名称
+    target_account = "机器之心"  # 修改为您想爬取的公众号名称
     
     # 设置最大爬取文章数量
     max_articles = 10
