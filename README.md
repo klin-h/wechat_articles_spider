@@ -1,21 +1,21 @@
 # wechat_articles_spider
 For WeChat Official Accounts, a small-scale crawler program that doesn't use packet capture tools.
 一个小规模并且不需要使用抓包工具的微信公众号爬虫程序，基本做到开袋即食
-截止2025/4/17，包含了三种功能，分别是
-1、对一系列公众号名爬取最近两天内更新的所有文章的标题、URL、更新时间，测试样例见Crawl_WeChat_Official_Account_History.py
-2、对某个公众号名、爬取其所有历史文章的标题、URL、更新时间，测试样例见Crawl_WeChat_Official_Account_Search_byname.py
-3、对某个公众号名、爬取其所有历史文章并从文章中查找由用户自定义的关键词（支持三个）同时支持为三个词语赋予不同的权重，最后每篇文章
-得分 = 词语出现次数·权重 ，最后将所有文章按得分降序输出，测试样例见Crawl_All_sort_by_keyword.py
+截止2025/4/17，包含了三种功能，分别是。
+1、对一系列公众号名爬取最近两天内更新的所有文章的标题、URL、更新时间，测试样例见Crawl_WeChat_Official_Account_History.py  
+2、对某个公众号名、爬取其所有历史文章的标题、URL、更新时间，测试样例见Crawl_WeChat_Official_Account_Search_byname.py  
+3、对某个公众号名、爬取其所有历史文章并从文章中查找由用户自定义的关键词（支持三个）同时支持为三个词语赋予不同的权重，最后每篇文章  
+得分 = 词语出现次数·权重 ，最后将所有文章按得分降序输出，测试样例见Crawl_All_sort_by_keyword.py  
 
 # 使用教学（新手向）
 
-使用前准备
-安装依赖库
-在vs code 等编译器终端粘贴这段代码并回车
-pip install selenium webdriver-manager pandas wechatarticles
-需要下载谷歌浏览器，如有则跳过这一步（ https://www.google.com/chrome/）
-注册一个微信公众号账户，注册链接https://mp.weixin.qq.com/ （进入后注册一个新公众号账户，切记不要用官方的账号！！！，因为账号可能被封禁）
-文件格式
+使用前准备  
+安装依赖库  
+在vs code 等编译器终端粘贴这段代码并回车  
+pip install selenium webdriver-manager pandas wechatarticles  
+需要下载谷歌浏览器，如有则跳过这一步（ https://www.google.com/chrome/）  
+注册一个微信公众号账户，注册链接https://mp.weixin.qq.com/ （进入后注册一个新公众号账户，切记不要用官方的账号！！！，因为账号可能被封禁）  
+文件格式  
 
 ## 一、功能一使用教学
 程序需要一个名为accounts.xlsx的Excel文件，包含要爬取的公众号名称，格式如下（本文件夹已经包括）
