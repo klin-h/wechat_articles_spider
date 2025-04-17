@@ -87,7 +87,7 @@ nickname
 Copyright © [2020] [wnma3mz]
 You can find the original license [here](https://www.apache.org/licenses/LICENSE-2.0).
 
-#许可证
+# 许可证
 MIT License
-#免责声明
+# 免责声明
 本工具仅供学习和研究使用，请勿用于任何商业用途。使用本工具爬取内容时，请遵守微信公众平台的使用条款和相关法律法规。
