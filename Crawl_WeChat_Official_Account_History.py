@@ -1,43 +1,38 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from wechat_mp_crawler import WechatArticleManager
+from wechat_mp_crawler import WechatArticleManager, read_accounts_from_excel
 
 def main():
     """
-    爬取指定公众号的历史文章（最多100篇）
+    从Excel中读取公众号列表，并爬取这些公众号的最近文章
     """
     # 初始化管理器
     manager = WechatArticleManager()
     
-    # 指定公众号名称
-    target_account = "机器之心"  # 修改为您想爬取的公众号名称
+    # 从Excel文件读取公众号列表
+    accounts_file = "accounts.xlsx"
+    account_list = read_accounts_from_excel(accounts_file)
     
-    # 设置最大爬取文章数量
-    max_articles = 10
+    if not account_list:
+        print(f"从 {accounts_file} 中未读取到有效的公众号名称，程序终止")
+        return
     
-    # 可选：指定输出文件名
-    # output_file = "xxx_history.xlsx"
+    print(f"待爬取的公众号列表: {', '.join(account_list)}")
     
-    print(f"准备爬取公众号 '{target_account}' 的历史文章（最多 {max_articles} 篇）")
+    # 设置参数
+    articles_per_account = 15  # 每个公众号获取的文章数量(最大值)
+    days = 2  # 获取最近几天的文章 (默认为2，即今天和昨天)
     
     # 执行爬取操作
-    success, articles = manager.crawl_account_history(
-        nickname=target_account,
-        max_articles=max_articles,
-        # output_file=output_file  # 可选参数
+    success, articles = manager.crawl_multiple_accounts(
+        nickname_list=account_list,
+        articles_per_account=articles_per_account,
+        days=days
     )
     
     if success:
         print(f"成功完成爬取！获取到 {len(articles)} 篇文章")
-        
-        # 打印前5篇文章信息
-        print("\n前5篇文章:")
-        for i, article in enumerate(articles[:5]):
-            if i < len(articles):
-                print(f"{i+1}. {article['title']} - 发布于 {article.get('publish_date', '未知日期')}")
-                print(f"   链接: {article['link']}")
-                print()
     else:
         print("爬取过程中出现问题，请检查日志")
 
