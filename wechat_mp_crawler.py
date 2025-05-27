@@ -687,20 +687,97 @@ class ArticleCrawler:
                 # 使用BeautifulSoup解析HTML
                 soup = BeautifulSoup(response.text, 'html.parser')
                 
-                # 1. 尝试查找微信文章页面中的发布时间元素
+                # 方法1：从JavaScript中提取时间戳 - 这是正确的方法
+                page_text = response.text
+                
+                # 查找JavaScript中的时间戳模式
+                # 根据搜索结果，微信文章中时间戳的模式类似：var ct = "1567005049"
+                timestamp_patterns = [
+                    r'var\s+ct\s*=\s*["\'](\d{10})["\']',  # var ct = "1567005049"
+                    r'ct\s*=\s*["\'](\d{10})["\']',        # ct = "1567005049"
+                    r'"ct"\s*:\s*["\']?(\d{10})["\']?',     # "ct": "1567005049" 或 "ct": 1567005049
+                    r'create_time["\']?\s*:\s*["\']?(\d{10})["\']?',  # create_time: 1567005049
+                    r'publish_time["\']?\s*:\s*["\']?(\d{10})["\']?', # publish_time: 1567005049
+                    # 新增更多可能的模式
+                    r'var\s+t\s*=\s*["\'](\d{10})["\']',    # var t = "1567005049"
+                    r'"(\d{10})",n="(\d{10})",s="([^"]+)"', # 匹配类似 "1575860164",n="1575539255",s="2019-12-05" 的模式
+                    r't\s*=\s*["\'](\d{10})["\']',          # t = "1567005049"
+                    r'["\'](\d{10})["\'],\s*n\s*=\s*["\'](\d{10})["\']', # 时间戳对的模式
+                ]
+                
+                # 尝试从JavaScript中提取时间戳
+                for pattern in timestamp_patterns:
+                    matches = re.findall(pattern, page_text, re.IGNORECASE)
+                    if matches:
+                        try:
+                            # 处理不同的匹配结果格式
+                            timestamp = None
+                            
+                            if isinstance(matches[0], tuple):
+                                # 如果匹配结果是元组（多个捕获组），取第一个作为时间戳
+                                for item in matches[0]:
+                                    if item.isdigit() and len(item) == 10:
+                                        timestamp = int(item)
+                                        break
+                            else:
+                                # 如果匹配结果是字符串
+                                if matches[0].isdigit() and len(matches[0]) == 10:
+                                    timestamp = int(matches[0])
+                            
+                            if timestamp:
+                                # 验证时间戳是否合理（2000年到2030年之间）
+                                if 946684800 <= timestamp <= 1893456000:  # 2000-01-01 到 2030-01-01
+                                    # 将时间戳转换为日期对象
+                                    publish_date_obj = datetime.fromtimestamp(timestamp)
+                                    publish_date = publish_date_obj.date()
+                                    publish_date_str = publish_date_obj.strftime('%Y-%m-%d %H:%M:%S')
+                                    
+                                    print(f"从JavaScript中提取到时间戳: {timestamp}, 转换后的时间: {publish_date_str}")
+                                    return publish_date, publish_date_str
+                                else:
+                                    print(f"时间戳 {timestamp} 不在合理范围内，跳过")
+                                    
+                        except (ValueError, OverflowError) as e:
+                            print(f"时间戳转换错误: {e}")
+                            continue
+                
+                # 方法2：查找更复杂的JavaScript时间设置模式
+                # 寻找类似 document.getElementById("publish_time") 的JavaScript代码块
+                js_patterns = [
+                    r'document\.getElementById\("publish_time"\)[^}]+?s\s*=\s*["\']([^"\']+)["\']',
+                    r'getElementById\("publish_time"\)[^}]+?(\d{4}-\d{2}-\d{2})',
+                ]
+                
+                for pattern in js_patterns:
+                    matches = re.findall(pattern, page_text, re.IGNORECASE | re.DOTALL)
+                    if matches:
+                        for match in matches:
+                            # 尝试解析找到的日期字符串
+                            date_formats = ['%Y-%m-%d', '%Y-%m-%d %H:%M:%S']
+                            for date_format in date_formats:
+                                try:
+                                    publish_date_obj = datetime.strptime(match, date_format)
+                                    publish_date = publish_date_obj.date()
+                                    print(f"从JavaScript日期字符串中提取到时间: {match}")
+                                    return publish_date, match
+                                except ValueError:
+                                    continue
+                
+                # 方法3：尝试查找微信文章页面中的发布时间元素（备用方法）
                 publish_time_element = soup.select_one('#publish_time') or soup.select_one('.publish_time')
                 if publish_time_element:
                     publish_time_text = publish_time_element.text.strip()
-                    # 尝试解析日期
-                    date_formats = ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%Y年%m月%d日 %H:%M', '%Y年%m月%d日']
-                    for date_format in date_formats:
-                        try:
-                            publish_date = datetime.strptime(publish_time_text, date_format).date()
-                            return publish_date, publish_time_text
-                        except ValueError:
-                            continue
+                    if publish_time_text:  # 如果元素有内容
+                        # 尝试解析日期
+                        date_formats = ['%Y-%m-%d %H:%M:%S', '%Y-%m-%d', '%Y年%m月%d日 %H:%M', '%Y年%m月%d日']
+                        for date_format in date_formats:
+                            try:
+                                publish_date = datetime.strptime(publish_time_text, date_format).date()
+                                return publish_date, publish_time_text
+                            except ValueError:
+                                continue
                 
-                # 2. 在页面中查找时间模式
+                # 方法4：在页面源码中查找其他时间模式（最后备用）
                 date_patterns = [
                     r'\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}',
                     r'\d{4}-\d{2}-\d{2}',
@@ -709,7 +786,6 @@ class ArticleCrawler:
                 ]
                 
                 # 遍历页面查找可能的日期
-                page_text = response.text
                 for pattern in date_patterns:
                     matches = re.findall(pattern, page_text)
                     if matches:
